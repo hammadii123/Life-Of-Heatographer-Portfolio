@@ -1,0 +1,885 @@
+/* ==========================================================================
+   HERO — "Jo Ruk Gaya" / Everyone was passing. I stopped.
+
+   One sticky stage, six beats. The JS writes --p, --a1..--a5, --mx, --my,
+   --pan and data-act onto .hero__stage and nothing else; every movement below
+   is derived from those with calc(). Only transform / opacity / filter animate.
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  /* The scroll budget. Shorter and the shutter lands before the crowd has
+     registered; longer and it becomes a chore. */
+  height: 380svh;
+  background: var(--ink);
+}
+.hero[data-static="true"] {
+  height: auto;
+}
+
+.hero__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.hero__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  isolation: isolate;
+
+  /* The words sit on the floor of the stage. .hero__world is absolute, so the
+     copy is the only child in flow and align-content pins it to the bottom. */
+  display: grid;
+  align-content: end;
+
+  /* Derived timings, declared once and read everywhere. */
+  --close: min(1, calc(var(--a4, 0) * 4.2));
+  --develop: max(0, calc((var(--a4, 0) - 0.18) / 0.82));
+  --exit: var(--a5, 0);
+}
+
+.hero__world {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  /* One cell — the still and the print overlap in the centre rather than
+     becoming two stacked rows. */
+  grid-template: 1fr / 1fr;
+}
+.hero__world > * {
+  grid-area: 1 / 1;
+}
+
+/* --------------------------------------------------------------------------
+   ACT 1-2 — the river
+
+   Three lanes of Hammad's own photographs at three speeds. The blur is
+   directional (feGaussianBlur "14 0") because a crowd is only smeared along
+   the axis it travels on. A round CSS blur() reads as "out of focus", which is
+   a mistake, not a crowd.
+   -------------------------------------------------------------------------- */
+.hero__river {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  gap: clamp(0.5rem, 1.6vh, 1.4rem);
+  /* Present from the first frame, lifting through act one, gone at the shutter. */
+  opacity: calc((0.55 + 0.45 * var(--a1, 0)) * (1 - var(--close)));
+
+}
+
+/* Act two: the crowd parts. A pool of darkness opens in the middle of the
+   traffic exactly where the one who stopped is standing, so he is not pasted
+   on top of the street — the street makes room for him. */
+.hero__part {
+  position: absolute;
+  inset: -20%;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    var(--ink) 0,
+    var(--ink) 34%,
+    color-mix(in oklab, var(--ink) 55%, transparent) 52%,
+    transparent 68%
+  );
+  opacity: var(--a2, 0);
+  transform: scale(calc(0.45 + var(--a2, 0) * 0.55));
+}
+
+.hero__lane {
+  overflow: clip;
+  /* Feather the ends so people enter and leave rather than being cut off. */
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+/* Pointer parallax lives here so it never fights the loop animation on the
+   track. Move your head, the street moves — three depths, three amounts. */
+.hero__pan {
+  transform: translate3d(calc(var(--pan, 0) * var(--pan-amt, 10px)), 0, 0);
+  transition: transform 0.6s var(--ease-out);
+}
+
+.hero__track {
+  display: flex;
+  gap: clamp(0.6rem, 2vw, 1.8rem);
+  width: max-content;
+  /* Content is doubled in the markup, so travelling exactly -50% loops
+     seamlessly — no modulo, no JS, no drift over time. */
+  animation: lane-pass var(--lane-dur, 40s) linear infinite;
+  will-change: transform;
+}
+
+@keyframes lane-pass {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.hero__body {
+  position: relative;
+  flex: 0 0 auto;
+  height: var(--lane-h, 26vh);
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+.hero__body img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Dimmed. They are context, not the subject — but still readable as people,
+     or the opening frame is just a dark smear. */
+  /* brightness and saturate are cheap per-pixel filters and stay on the GPU.
+     A blur() here is what froze the renderer — the motion smear is baked into
+     the files instead. See scripts/make-motion.mjs. */
+  filter: brightness(0.72) saturate(0.82);
+}
+
+/* Back lane: furthest, slowest, softest, least parallax. */
+.hero__lane[data-lane="0"] {
+  --lane-h: 20vh;
+  --pan-amt: 8px;
+  opacity: 0.5;
+}
+.hero__lane[data-lane="0"] .hero__track {
+  --lane-dur: 64s;
+}
+
+.hero__lane[data-lane="1"] {
+  --lane-h: 27vh;
+  --pan-amt: 18px;
+  opacity: 0.72;
+}
+.hero__lane[data-lane="1"] .hero__track {
+  --lane-dur: 42s;
+  animation-direction: reverse;
+}
+
+.hero__lane[data-lane="2"] {
+  --lane-h: 33vh;
+  --pan-amt: 34px;
+  opacity: 0.9;
+}
+.hero__lane[data-lane="2"] .hero__track {
+  --lane-dur: 27s;
+}
+
+/* --------------------------------------------------------------------------
+   ACT 2 — the one who stopped
+   Sharp, full colour, completely still, while everything keeps moving around
+   him. The entire thesis of the site is this one contrast.
+   -------------------------------------------------------------------------- */
+.hero__still {
+  position: relative;
+  z-index: 2;
+  width: clamp(200px, 30vw, 380px);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  opacity: var(--a2, 0);
+  transform: scale(calc(0.94 + var(--a2, 0) * 0.06));
+  box-shadow: 0 40px 120px -30px rgb(0 0 0 / 0.9);
+}
+.hero__still img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* A held breath of light around the person standing still. */
+.hero__still::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  z-index: -1;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--feroze) 26%, transparent),
+    transparent 62%
+  );
+  opacity: var(--a2, 0);
+}
+.hero__still-tag {
+  position: absolute;
+  left: 0.8rem;
+  bottom: 0.7rem;
+  color: var(--feroze);
+  font-size: 0.55rem;
+  opacity: calc(var(--a2, 0) * (1 - var(--a3, 0)));
+}
+.hero__still-tag::before {
+  content: "● ";
+  color: var(--feroze);
+}
+
+/* --------------------------------------------------------------------------
+   ACT 3 — the grey, and the hole the viewfinder cuts in it
+   -------------------------------------------------------------------------- */
+.hero__grey {
+  /* A backdrop-filter layer is expensive whether or not it is visible, so it
+     is taken out of the tree except in the acts that use it. */
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: var(--a3, 0);
+  background: color-mix(in oklab, var(--ink) 55%, transparent);
+  backdrop-filter: grayscale(1) contrast(1.12) brightness(0.72);
+  -webkit-backdrop-filter: grayscale(1) contrast(1.12) brightness(0.72);
+  --r: calc(8vmax + var(--a3, 0) * 5vmax);
+  mask-image: radial-gradient(
+    circle var(--r) at var(--mx, 50%) var(--my, 50%),
+    transparent 0%,
+    transparent 58%,
+    #000 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle var(--r) at var(--mx, 50%) var(--my, 50%),
+    transparent 0%,
+    transparent 58%,
+    #000 100%
+  );
+}
+
+.hero__stage[data-act="2"] .hero__grey,
+.hero__stage[data-act="3"] .hero__grey,
+.hero__stage[data-act="4"] .hero__grey {
+  display: block;
+}
+
+/* Browsers without backdrop-filter still get the act: a dark vignette with
+   the same hole, so the viewfinder still lights what it is pointed at. */
+@supports not (backdrop-filter: grayscale(1)) {
+  .hero__grey {
+    background: color-mix(in oklab, var(--ink) 88%, transparent);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   ACT 3 — the viewfinder
+   -------------------------------------------------------------------------- */
+.hero__finder {
+  position: absolute;
+  z-index: 4;
+  left: var(--mx, 50%);
+  top: var(--my, 50%);
+  width: calc(17vmax + var(--a3, 0) * 9vmax);
+  aspect-ratio: 3 / 2;
+  translate: -50% -50%;
+  pointer-events: none;
+  opacity: calc(var(--a3, 0) * (1 - var(--close)));
+}
+.hero__bracket {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--feroze);
+}
+.hero__bracket[data-c="tl"] {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+.hero__bracket[data-c="tr"] {
+  top: 0;
+  right: 0;
+  border-left: 0;
+  border-bottom: 0;
+}
+.hero__bracket[data-c="bl"] {
+  bottom: 0;
+  left: 0;
+  border-right: 0;
+  border-top: 0;
+}
+.hero__bracket[data-c="br"] {
+  bottom: 0;
+  right: 0;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* Rule-of-thirds guides, the way they sit in an actual finder. */
+.hero__grid {
+  position: absolute;
+  inset: 8px;
+  opacity: 0.22;
+  background:
+    linear-gradient(var(--feroze), var(--feroze)) 33.33% 0 / 1px 100% no-repeat,
+    linear-gradient(var(--feroze), var(--feroze)) 66.66% 0 / 1px 100% no-repeat,
+    linear-gradient(var(--feroze), var(--feroze)) 0 33.33% / 100% 1px no-repeat,
+    linear-gradient(var(--feroze), var(--feroze)) 0 66.66% / 100% 1px no-repeat;
+}
+
+.hero__crosshair {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 22px;
+  height: 22px;
+  translate: -50% -50%;
+  /* Hunting for focus — the small restless movement a real AF point makes. */
+  animation: hunt 2.6s var(--ease-in-out) infinite;
+}
+.hero__crosshair::before,
+.hero__crosshair::after {
+  content: "";
+  position: absolute;
+  background: var(--feroze);
+}
+.hero__crosshair::before {
+  inset: 50% 0 auto 0;
+  height: 1px;
+}
+.hero__crosshair::after {
+  inset: 0 50% 0 auto;
+  width: 1px;
+}
+@keyframes hunt {
+  0%,
+  100% {
+    scale: 1;
+    opacity: 0.85;
+  }
+  45% {
+    scale: 0.72;
+    opacity: 1;
+  }
+}
+
+.hero__readout {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 10px);
+  color: var(--feroze);
+  font-size: 0.62rem;
+}
+/* Arrives only at the end of act three — the beat before the shutter. */
+.hero__lock {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  color: var(--ochre);
+  font-size: 0.62rem;
+  opacity: max(0, calc((var(--a3, 0) - 0.62) / 0.38));
+}
+
+/* --------------------------------------------------------------------------
+   ACT 4 — the shutter
+   Two blades closing from top and bottom, the way a focal-plane shutter works.
+   Then the flash. Then the print.
+   -------------------------------------------------------------------------- */
+.hero__blade {
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  right: 0;
+  height: 52%;
+  background: var(--ink);
+  pointer-events: none;
+}
+.hero__blade[data-blade="top"] {
+  top: 0;
+  transform: translate3d(0, calc(-100% + var(--close) * 100%), 0);
+}
+.hero__blade[data-blade="bottom"] {
+  bottom: 0;
+  transform: translate3d(0, calc(100% - var(--close) * 100%), 0);
+}
+
+.hero__flash {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  background: #fff;
+  pointer-events: none;
+  /* Full white exactly as the blades meet, gone as the print appears. */
+  /* A flash is 1/200th of a second, not a white screen you scroll through.
+     It peaks as the blades meet and is gone almost immediately. */
+  opacity: calc(var(--close) * (1 - min(1, calc(var(--develop) * 9))) * 0.8);
+}
+
+/* --------------------------------------------------------------------------
+   ACT 4 — the print, developing
+   Grain first, then shadows, then colour: the order a real print comes up in
+   the tray, which is the one thing worth keeping from the darkroom idea.
+
+   ACT 5 — and then you go through it. The print comes toward you and blows
+   out to white, so you leave the hero through the photograph rather than
+   scrolling past it.
+   -------------------------------------------------------------------------- */
+.hero__print {
+  position: relative;
+  z-index: 8;
+  width: clamp(230px, 44vw, 520px);
+  aspect-ratio: 3 / 4;
+  margin: 0;
+  overflow: hidden;
+  opacity: var(--close);
+  transform: scale(calc((0.92 + var(--close) * 0.08) * (1 + var(--exit) * 2.2)));
+  /* Act 5 used to ramp brightness past 3, which just looked like a broken
+     overexposed JPEG. The photograph now stays a photograph and simply comes
+     toward you and goes. */
+  filter: grayscale(calc(1 - var(--develop))) brightness(calc(0.42 + var(--develop) * 0.58))
+    contrast(calc(1.8 - var(--develop) * 0.8));
+  box-shadow: 0 60px 140px -40px rgb(0 0 0 / 0.95);
+}
+.hero__print img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero__print-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: calc(0.55 * (1 - var(--develop)) + 0.04);
+  mix-blend-mode: overlay;
+}
+.hero__print-cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  gap: 0.3rem;
+  padding: 2.5rem 1.1rem 1rem;
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.82));
+  opacity: calc(var(--develop) * (1 - min(1, calc(var(--exit) * 3))));
+}
+.hero__print-cap .urdu {
+  font-size: 1rem;
+  line-height: 1.9;
+  text-align: right;
+}
+.hero__print-cap .mono {
+  color: var(--bone-dim);
+}
+
+/* --------------------------------------------------------------------------
+   Atmosphere — grain, vignette, scrim
+   -------------------------------------------------------------------------- */
+
+/* Film grain over the whole stage. The single cheapest thing that stops a
+   dark web page from looking like a dark web page. */
+.hero__film {
+  position: absolute;
+  inset: -30%;
+  z-index: 9;
+  pointer-events: none;
+  /* A 140px noise tile, rasterised once by the browser and repeated. An
+     earlier version ran feTurbulence across the whole stage through filter:
+     url(#grain) — the renderer re-evaluated that every frame and the tab
+     stopped responding. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+@keyframes grain-shift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  33% {
+    transform: translate3d(-1.5%, 1%, 0);
+  }
+  66% {
+    transform: translate3d(1%, -1.5%, 0);
+  }
+}
+
+.hero__vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 42%, rgb(0 0 0 / 0.75) 100%);
+}
+
+/* A scrim under the words. The crowd is bright in places and the title has to
+   stay legible over all of it — this is the one thing between "cinematic" and
+   "unreadable". It lifts away with the copy in act three. */
+.hero__scrim {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 78%;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    var(--ink) 4%,
+    color-mix(in oklab, var(--ink) 88%, transparent) 34%,
+    color-mix(in oklab, var(--ink) 40%, transparent) 68%,
+    transparent 100%
+  );
+  opacity: calc(1 - min(1, calc(var(--a3, 0) * 1.6)));
+}
+
+/* --------------------------------------------------------------------------
+   ACT 0 — the opening
+
+   Black. One line of Nastaliq inks itself in. Then the street rises behind it.
+   Four seconds that tell you what kind of site this is before a single
+   photograph has loaded.
+   -------------------------------------------------------------------------- */
+.hero__curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  pointer-events: none;
+  animation: curtain 2.6s var(--ease-out) 0.7s both;
+}
+@keyframes curtain {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.hero__ink {
+  max-width: 24ch;
+  color: var(--bone);
+  font-size: clamp(1.2rem, 3.4vw, 2.6rem);
+  /* The line arrives the way it is read: from the right, wet, then settling. */
+  animation: ink-in 2.4s var(--ease-out) both;
+}
+@keyframes ink-in {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translate3d(26px, 0, 0);
+  }
+  38%,
+  62% {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    filter: blur(3px);
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Words
+   -------------------------------------------------------------------------- */
+.hero__copy {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  padding-top: calc(var(--nav-h) + 1rem);
+  padding-bottom: clamp(3.5rem, 10vh, 7rem);
+  /* Present for acts one and two, out of the way once the camera comes up. */
+  opacity: calc(1 - min(1, calc(var(--a3, 0) * 1.6)));
+  transform: translate3d(0, calc(var(--a3, 0) * -2.5rem), 0);
+}
+.hero__stage[data-act="3"] .hero__copy,
+.hero__stage[data-act="4"] .hero__copy,
+.hero__stage[data-act="5"] .hero__copy {
+  pointer-events: none;
+}
+
+.hero__kicker {
+  margin-bottom: 1rem;
+  color: var(--feroze);
+  animation: line-rise 1.2s var(--ease-out) 2.5s both;
+}
+
+.hero__title {
+  font-size: var(--fs-display);
+  max-width: 18ch;
+}
+.hero__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+  /* The two lines arrive one after the other — the second is the turn in the
+     sentence, so it gets its own beat. Both wait for the curtain. */
+  animation: line-rise 1.25s var(--ease-out) both;
+}
+.hero__line[data-l="1"] {
+  animation-delay: 2.75s;
+}
+.hero__line[data-l="2"] {
+  animation-delay: 3.05s;
+  color: var(--feroze);
+}
+@keyframes line-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.95em, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero__urdu {
+  margin-top: 0.9rem;
+  color: var(--bone-dim);
+  font-size: clamp(1.05rem, 2vw, 1.6rem);
+  animation: line-rise 1.3s var(--ease-out) 3.35s both;
+}
+
+.hero__sub {
+  margin-top: 1.1rem;
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: var(--fs-lead);
+  animation: line-rise 1.3s var(--ease-out) 3.55s both;
+}
+
+.hero__acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.9rem;
+  animation: line-rise 1.3s var(--ease-out) 3.75s both;
+}
+.hero__go {
+  padding: 0.85rem 1.5rem;
+  background: var(--feroze);
+  color: var(--ink);
+  font-family: var(--f-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: background 0.4s var(--ease-out), color 0.4s var(--ease-out),
+    transform 0.4s var(--ease-out);
+}
+.hero__go:hover {
+  background: var(--bone);
+  transform: translateY(-2px);
+}
+.hero__go[data-ghost] {
+  background: none;
+  color: var(--fg);
+  border: 1px solid var(--rule-strong);
+}
+.hero__go[data-ghost]:hover {
+  border-color: var(--feroze);
+  color: var(--feroze);
+}
+
+/* --------------------------------------------------------------------------
+   The camera's HUD — narrates the acts, entirely from CSS.
+   -------------------------------------------------------------------------- */
+.hero__hud {
+  position: absolute;
+  /* Above the flash, or it vanishes exactly while it is narrating the most
+     interesting beat. */
+  z-index: 11;
+  right: var(--gutter);
+  bottom: 1.5rem;
+  display: grid;
+  justify-items: end;
+  gap: 0.5rem;
+  font-size: 0.58rem;
+  color: var(--bone-faint);
+  opacity: calc(min(1, calc(var(--p, 0) * 14)) * (1 - var(--exit)));
+  animation: line-rise 1s var(--ease-out) 3.2s both;
+}
+.hero__hud-act::before {
+  content: "act 1 — the crowd";
+  color: var(--feroze);
+}
+.hero__stage[data-act="2"] .hero__hud-act::before {
+  content: "act 2 — one of them stops";
+}
+.hero__stage[data-act="3"] .hero__hud-act::before {
+  content: "act 3 — the camera comes up";
+}
+.hero__stage[data-act="4"] .hero__hud-act::before {
+  content: "act 4 — the frame is taken";
+}
+.hero__stage[data-act="5"] .hero__hud-act::before {
+  content: "act 5 — through the lens";
+}
+.hero__hud-bar {
+  display: block;
+  width: clamp(80px, 14vw, 170px);
+  height: 1px;
+  background: var(--rule-strong);
+}
+.hero__hud-bar i {
+  display: block;
+  height: 100%;
+  width: calc(var(--p, 0) * 100%);
+  background: var(--feroze);
+}
+
+.hero__cue {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 1.4rem;
+  translate: -50%;
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  font-size: 0.6rem;
+  color: var(--bone-faint);
+  opacity: calc((1 - min(1, calc(var(--p, 0) * 8))));
+  animation: line-rise 1s var(--ease-out) 3.9s both;
+}
+.hero__cue-line {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(var(--feroze), transparent);
+  animation: cue 2.4s var(--ease-in-out) infinite;
+  transform-origin: top;
+}
+@keyframes cue {
+  0%,
+  100% {
+    scale: 1 0.35;
+    opacity: 0.4;
+  }
+  50% {
+    scale: 1 1;
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   The acts do not change on a phone — the sizes do. A story that only works
+   on a laptop is not a story, it is a demo.
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .hero {
+    height: 330svh;
+  }
+  .hero__lane[data-lane="0"] {
+    --lane-h: 15vh;
+  }
+  .hero__lane[data-lane="1"] {
+    --lane-h: 20vh;
+  }
+  .hero__lane[data-lane="2"] {
+    --lane-h: 25vh;
+  }
+  .hero__still {
+    width: clamp(170px, 52vw, 290px);
+  }
+  .hero__finder {
+    width: 66vw;
+  }
+  .hero__print {
+    width: min(76vw, 340px);
+  }
+  .hero__title {
+    max-width: 14ch;
+  }
+  .hero__hud {
+    bottom: 1rem;
+  }
+  .hero__cue {
+    display: none;
+  }
+}
+
+/* Short, wide viewports (1366×640 laptops, phones in landscape) have very
+   little vertical room — the lanes give way to the words. */
+@media (max-height: 620px) {
+  .hero__lane[data-lane="0"] {
+    display: none;
+  }
+  .hero__lane[data-lane="1"] {
+    --lane-h: 22vh;
+  }
+  .hero__lane[data-lane="2"] {
+    --lane-h: 30vh;
+  }
+  .hero__still {
+    width: clamp(140px, 22vw, 230px);
+  }
+  .hero__print {
+    width: min(38vw, 260px);
+  }
+  .hero__copy {
+    padding-bottom: 2.25rem;
+  }
+  .hero__sub {
+    display: none;
+  }
+  .hero__cue {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   No motion — the end of the story, told still.
+   -------------------------------------------------------------------------- */
+.hero__stage[data-static="true"] {
+  --a1: 0;
+  --a2: 0;
+  --a3: 0;
+  --close: 1;
+  --develop: 1;
+  --exit: 0;
+  height: auto;
+  padding-block: calc(var(--nav-h) + 3rem) 4rem;
+}
+.hero__stage[data-static="true"] .hero__river,
+.hero__stage[data-static="true"] .hero__still,
+.hero__stage[data-static="true"] .hero__grey,
+.hero__stage[data-static="true"] .hero__finder,
+.hero__stage[data-static="true"] .hero__blade,
+.hero__stage[data-static="true"] .hero__flash,
+.hero__stage[data-static="true"] .hero__curtain,
+.hero__stage[data-static="true"] .hero__film,
+.hero__stage[data-static="true"] .hero__hud,
+.hero__stage[data-static="true"] .hero__cue {
+  display: none;
+}
+.hero__stage[data-static="true"] .hero__world {
+  position: relative;
+  margin-bottom: 2rem;
+}
+.hero__stage[data-static="true"] .hero__print {
+  filter: none;
+  transform: none;
+  opacity: 1;
+}
+.hero__stage[data-static="true"] .hero__copy {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero {
+    height: auto;
+  }
+  .hero__track,
+  .hero__crosshair,
+  .hero__cue-line,
+  .hero__film,
+  .hero__curtain,
+  .hero__ink,
+  .hero__kicker,
+  .hero__line,
+  .hero__urdu,
+  .hero__sub,
+  .hero__acts,
+  .hero__hud {
+    animation: none;
+  }
+}

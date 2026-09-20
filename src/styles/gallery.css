@@ -1,0 +1,147 @@
+/* ==========================================================================
+   The contact sheet — /work
+   ========================================================================== */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--rule);
+  overflow: hidden;
+  transition: border-color 0.45s var(--ease-out), color 0.45s var(--ease-out);
+}
+/* The chapter's own colour floods in from the bottom on hover and stays on
+   when the filter is active — so the filter row is also a colour legend. */
+.filter::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in oklab, var(--accent) 22%, transparent);
+  transform-origin: bottom;
+  scale: 1 0;
+  transition: scale 0.5s var(--ease-out);
+}
+.filter:hover::before,
+.filter[data-on]::before {
+  scale: 1 1;
+}
+.filter:hover,
+.filter[data-on] {
+  border-color: color-mix(in oklab, var(--accent) 60%, transparent);
+}
+
+.filter__urdu {
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--accent);
+}
+.filter__label {
+  font-size: var(--fs-small);
+}
+.filter__n {
+  font-size: 0.6rem;
+  color: var(--bone-faint);
+}
+.filter[data-on] .filter__n {
+  color: var(--accent);
+}
+
+.sheet__count {
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  color: var(--bone-faint);
+}
+
+/* --------------------------------------------------------------------------
+   The mosaic
+   -------------------------------------------------------------------------- */
+.sheet {
+  display: grid;
+  gap: clamp(1rem, 2.4vw, 2.2rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+.sheet__link {
+  position: relative;
+  display: block;
+}
+
+/* The caption plate. On a fine pointer it waits under the bottom edge and
+   rises on hover; on touch, where there is no hover, it is always visible. */
+.sheet__plate {
+  display: grid;
+  gap: 0.15rem;
+  padding-top: 0.9rem;
+}
+.sheet__urdu {
+  font-size: 1rem;
+  line-height: 1.7;
+  text-align: left;
+  color: var(--accent);
+}
+.sheet__title {
+  font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+}
+.sheet__meta {
+  margin-top: 0.25rem;
+  font-size: 0.6rem;
+  color: var(--bone-faint);
+}
+
+/* Photographs sit slightly desaturated until you engage with one. Proof
+   first, feeling second — the same rule as the home page. */
+.sheet__link .frame img {
+  filter: saturate(0.62) brightness(0.9);
+  transition: filter 0.8s var(--ease-out), transform 1.1s var(--ease-out);
+}
+@media (hover: hover) {
+  .sheet__link:hover .frame img {
+    filter: none;
+  }
+  .sheet__title {
+    transition: color 0.4s var(--ease-out);
+  }
+  .sheet__link:hover .sheet__title {
+    color: var(--accent);
+  }
+}
+
+@media (min-width: 640px) {
+  .sheet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* Nudge every other cell down so the sheet scrolls as a rhythm rather than
+     as rows landing in unison. */
+  .sheet__cell:nth-child(even) {
+    margin-top: clamp(1.5rem, 5vw, 4.5rem);
+  }
+}
+
+@media (min-width: 1100px) {
+  .sheet {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .sheet__cell:nth-child(even) {
+    margin-top: 0;
+  }
+  .sheet__cell:nth-child(3n + 2) {
+    margin-top: clamp(2rem, 6vw, 5.5rem);
+  }
+  .sheet__cell:nth-child(3n) {
+    margin-top: clamp(1rem, 3vw, 2.5rem);
+  }
+  /* A featured landscape frame earns two columns. */
+  .sheet__cell[data-shape="wide"][data-feature] {
+    grid-column: span 2;
+  }
+}

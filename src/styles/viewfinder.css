@@ -1,0 +1,181 @@
+/* ==========================================================================
+   The cursor as a viewfinder.
+   Injected by Viewfinder.tsx, fine pointers only.
+   ========================================================================== */
+
+/* The real cursor is hidden only once ours exists, so a failed script or a
+   touch device never leaves anyone without a pointer. */
+.has-vf,
+.has-vf * {
+  cursor: none !important;
+}
+
+.vf {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out);
+}
+.vf[data-on="true"] {
+  opacity: 1;
+}
+
+/* --- the focus dot: tracks the pointer almost exactly --- */
+.vf__dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--feroze);
+  translate: var(--tx) var(--ty);
+  transition: width 0.35s var(--ease-spring), height 0.35s var(--ease-spring),
+    margin 0.35s var(--ease-spring), background 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
+}
+
+/* --- the brackets: trail behind, and open up over a photograph --- */
+.vf__box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  translate: var(--x) var(--y);
+  opacity: 0;
+  scale: 0.6;
+  transition: width 0.5s var(--ease-spring), height 0.5s var(--ease-spring),
+    margin 0.5s var(--ease-spring), opacity 0.35s var(--ease-out), scale 0.5s var(--ease-spring),
+    rotate 0.6s var(--ease-out);
+}
+.vf__box i {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--feroze);
+}
+.vf__box i[data-c="tl"] {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+.vf__box i[data-c="tr"] {
+  top: 0;
+  right: 0;
+  border-left: 0;
+  border-bottom: 0;
+}
+.vf__box i[data-c="bl"] {
+  bottom: 0;
+  left: 0;
+  border-right: 0;
+  border-top: 0;
+}
+.vf__box i[data-c="br"] {
+  bottom: 0;
+  right: 0;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* --- the readout --- */
+.vf__label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  translate: var(--x) var(--y);
+  margin: 30px 0 0 -50%;
+  min-width: 0;
+  max-width: 22ch;
+  padding: 0;
+  font-family: var(--f-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--feroze);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+  white-space: nowrap;
+}
+.vf__label.urdu {
+  font-family: var(--f-urdu);
+  font-size: 0.95rem;
+  letter-spacing: normal;
+  text-transform: none;
+  line-height: 1.8;
+  margin-top: 26px;
+}
+
+/* --------------------------------------------------------------------------
+   Modes
+   -------------------------------------------------------------------------- */
+
+/* Over a photograph: the frame opens, the dot shrinks to a focus point, and
+   the label names what you are looking at. */
+.vf[data-mode="frame"] .vf__box {
+  width: 86px;
+  height: 86px;
+  margin: -43px 0 0 -43px;
+  opacity: 1;
+  scale: 1;
+}
+.vf[data-mode="frame"] .vf__dot {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+}
+.vf[data-mode="frame"] .vf__label {
+  opacity: 1;
+}
+
+/* Over something clickable: a tighter ring, still legible as a pointer. */
+.vf[data-mode="link"] .vf__box {
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  opacity: 1;
+  scale: 1;
+  rotate: 45deg;
+}
+.vf[data-mode="link"] .vf__dot {
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  background: var(--ochre);
+}
+.vf[data-mode="link"] .vf__label {
+  opacity: 1;
+}
+
+/* Over text you might select, get out of the way. */
+.vf[data-mode="text"] .vf__dot {
+  width: 2px;
+  height: 22px;
+  margin: -11px 0 0 -1px;
+  border-radius: 0;
+  opacity: 0.65;
+}
+
+/* Shutter press. */
+.vf[data-press="true"] .vf__box {
+  scale: 0.84;
+}
+.vf[data-press="true"] .vf__dot {
+  background: var(--bone);
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .vf {
+    display: none;
+  }
+  .has-vf,
+  .has-vf * {
+    cursor: auto !important;
+  }
+}

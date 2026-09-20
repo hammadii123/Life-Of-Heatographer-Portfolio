@@ -1,0 +1,553 @@
+/* ==========================================================================
+   Shared inner-page furniture
+   ========================================================================== */
+
+.section--tight {
+  padding-block: clamp(1rem, 3vw, 2rem) clamp(4rem, 9vw, 8rem);
+}
+
+.pagehead__meta {
+  margin-top: 1.25rem;
+  color: var(--accent);
+}
+
+/* ---------- closing note ---------- */
+.endnote__urdu {
+  color: var(--accent);
+  text-align: left;
+  font-size: clamp(1.15rem, 2.4vw, 1.8rem);
+}
+.endnote__title {
+  font-size: var(--fs-h2);
+  margin-block: 0.7rem 1.2rem;
+  max-width: 22ch;
+}
+.endnote__acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* ==========================================================================
+   Chapters index
+   ========================================================================== */
+.chapterCard {
+  position: relative;
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  padding-block: clamp(2.5rem, 6vw, 5rem);
+  border-top: 1px solid var(--rule);
+}
+@media (min-width: 980px) {
+  .chapterCard {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: center;
+  }
+}
+
+.chapterCard__no {
+  color: var(--accent);
+}
+.chapterCard__urdu {
+  color: var(--accent);
+  text-align: left;
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  line-height: 1.9;
+}
+.chapterCard__title {
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  margin-top: -0.3rem;
+}
+.chapterCard__kicker {
+  margin-top: 0.5rem;
+  color: var(--accent);
+}
+.chapterCard__blurb {
+  margin-top: 1rem;
+  color: var(--muted);
+  max-width: 44ch;
+}
+.chapterCard__go {
+  margin-top: 1.6rem;
+}
+
+/* A short horizontal run of that chapter's frames. Scrollable on touch,
+   which is the honest way to show a strip on a phone. */
+.strip {
+  display: flex;
+  gap: clamp(0.6rem, 1.4vw, 1rem);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--accent) 50%, transparent) transparent;
+}
+.strip::-webkit-scrollbar {
+  height: 3px;
+}
+.strip::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--accent) 50%, transparent);
+}
+.strip__item {
+  flex: 0 0 clamp(150px, 30vw, 230px);
+  scroll-snap-align: start;
+}
+.strip__item .frame img {
+  filter: saturate(0.6) brightness(0.88);
+  transition: filter 0.7s var(--ease-out), transform 1s var(--ease-out);
+}
+@media (hover: hover) {
+  .strip__item:hover .frame img {
+    filter: none;
+    transform: scale(1.04);
+  }
+}
+
+/* ==========================================================================
+   A chapter — /chapters/[slug]
+   ========================================================================== */
+.chapterEssay {
+  max-width: var(--measure);
+}
+.chapterEssay p {
+  color: var(--muted);
+}
+.chapterEssay p:first-child {
+  color: var(--fg);
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+}
+
+/* The essay sequence: alternating, generous, one frame at a time. */
+.plates {
+  display: grid;
+  gap: clamp(3rem, 9vw, 8rem);
+}
+.plate {
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .plate {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  }
+  /* Every other plate flips, so the eye crosses the page instead of running
+     straight down one gutter. */
+  .plate:nth-child(even) > .plate__frame {
+    order: 2;
+  }
+  .plate:nth-child(even) > .plate__words {
+    order: 1;
+  }
+}
+.plate__urdu {
+  color: var(--accent);
+  text-align: left;
+  font-size: clamp(1.05rem, 2vw, 1.5rem);
+}
+.plate__title {
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  margin-top: 0.2rem;
+}
+.plate__excerpt {
+  margin-top: 0.8rem;
+  color: var(--muted);
+  max-width: 46ch;
+}
+.plate__go {
+  margin-top: 1.2rem;
+}
+
+/* ==========================================================================
+   About
+   ==========================================================================*/
+.about__split {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .about__split {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+  .about__sticky {
+    position: sticky;
+    top: calc(var(--nav-h) + 2rem);
+  }
+}
+.about__prose h2 {
+  font-family: var(--f-display);
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
+  font-weight: 400;
+  margin-top: 2.5rem;
+  margin-bottom: 0.7rem;
+  line-height: 1.1;
+}
+.about__prose h2:first-child {
+  margin-top: 0;
+}
+.about__prose p {
+  color: var(--muted);
+}
+.about__prose p + p {
+  margin-top: 1.1em;
+}
+.about__prose em {
+  color: var(--fg);
+  font-style: italic;
+}
+
+.facts {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+.facts div {
+  display: grid;
+  gap: 0.25rem;
+}
+.facts dd {
+  font-size: var(--fs-small);
+  color: var(--muted);
+}
+
+/* ==========================================================================
+   Hire
+   ========================================================================== */
+.svcs {
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  border-block: 1px solid var(--rule);
+}
+@media (min-width: 860px) {
+  .svcs {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.svc {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  padding: clamp(1.75rem, 4vw, 3rem);
+  background: var(--bg);
+  overflow: hidden;
+  transition: background 0.6s var(--ease-out);
+}
+.svc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 90% at 0% 0%,
+    color-mix(in oklab, var(--accent) 16%, transparent),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-out);
+}
+.svc > * {
+  position: relative;
+}
+@media (hover: hover) {
+  .svc:hover::before {
+    opacity: 1;
+  }
+}
+.svc__urdu {
+  color: var(--accent);
+  text-align: left;
+  font-size: 1.2rem;
+  line-height: 1.8;
+}
+.svc__name {
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+}
+.svc__kicker {
+  color: var(--accent);
+  margin-top: 0.1rem;
+}
+.svc__price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  font-family: var(--f-display);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+.svc__price small {
+  font-family: var(--f-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--clay);
+}
+.svc__meta {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+.svc__desc {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: var(--fs-small);
+}
+.svc__list {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 1.25rem;
+}
+.svc__list li {
+  position: relative;
+  padding-left: 1.1rem;
+  font-size: var(--fs-small);
+  color: var(--muted);
+}
+.svc__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+}
+.svc__for {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: var(--fs-small);
+}
+.svc__for strong {
+  font-weight: 500;
+  color: var(--fg);
+}
+.svc__not {
+  margin-top: 0.5rem;
+  font-size: var(--fs-small);
+  color: var(--bone-faint);
+}
+
+/* ---------- FAQ ---------- */
+.faqs {
+  display: grid;
+  border-top: 1px solid var(--rule);
+}
+.faq {
+  border-bottom: 1px solid var(--rule);
+}
+.faq summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-block: clamp(1.1rem, 2.6vw, 1.7rem);
+  font-family: var(--f-display);
+  font-size: clamp(1.1rem, 2.1vw, 1.6rem);
+  list-style: none;
+  cursor: pointer;
+  transition: color 0.4s var(--ease-out);
+}
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+.faq summary:hover {
+  color: var(--accent);
+}
+.faq summary::after {
+  content: "+";
+  font-family: var(--f-mono);
+  font-size: 1.1rem;
+  color: var(--accent);
+  transition: rotate 0.45s var(--ease-spring);
+  flex: 0 0 auto;
+}
+.faq[open] summary::after {
+  rotate: 45deg;
+}
+.faq__a {
+  padding-bottom: 1.6rem;
+  max-width: var(--measure);
+  color: var(--muted);
+  font-size: var(--fs-small);
+}
+
+/* ==========================================================================
+   Journal
+   ========================================================================== */
+.posts {
+  display: grid;
+  border-top: 1px solid var(--rule);
+}
+.post {
+  position: relative;
+  display: grid;
+  gap: 0.4rem 2rem;
+  padding-block: clamp(1.75rem, 4vw, 2.75rem);
+  border-bottom: 1px solid var(--rule);
+  transition: background 0.5s var(--ease-out);
+}
+@media (min-width: 900px) {
+  .post {
+    grid-template-columns: 8rem 1fr 6rem;
+    align-items: baseline;
+  }
+}
+.post::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(var(--gutter) * -0.5);
+  z-index: -1;
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  scale: 0 1;
+  transform-origin: left;
+  transition: scale 0.65s var(--ease-out);
+}
+.post:hover::before {
+  scale: 1 1;
+}
+.post__date {
+  color: var(--bone-faint);
+}
+.post__urdu {
+  color: var(--accent);
+  text-align: left;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+.post__title {
+  font-size: clamp(1.35rem, 2.6vw, 2.1rem);
+  transition: transform 0.55s var(--ease-out);
+}
+.post:hover .post__title {
+  transform: translateX(0.35rem);
+}
+.post__desc {
+  margin-top: 0.4rem;
+  color: var(--muted);
+  font-size: var(--fs-small);
+  max-width: 56ch;
+}
+.post__read {
+  color: var(--bone-faint);
+}
+
+/* ---------- an article ---------- */
+.article {
+  max-width: 44rem;
+  margin-inline: auto;
+}
+.article h2 {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
+  line-height: 1.12;
+  margin-top: 2.75rem;
+  margin-bottom: 0.8rem;
+}
+.article p {
+  color: var(--muted);
+}
+.article p + p {
+  margin-top: 1.1em;
+}
+.article ul {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1.1rem;
+}
+.article li {
+  position: relative;
+  padding-left: 1.2rem;
+  color: var(--muted);
+}
+.article li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+}
+.article blockquote {
+  margin-block: 2.25rem;
+  padding-left: 1.4rem;
+  border-left: 2px solid var(--accent);
+  font-family: var(--f-display);
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.24;
+  color: var(--fg);
+}
+.article .frame {
+  margin-block: 2.5rem;
+}
+
+/* ==========================================================================
+   Contact
+   ========================================================================== */
+.ways {
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  border-block: 1px solid var(--rule);
+}
+@media (min-width: 760px) {
+  .ways {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.way {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  background: var(--bg);
+  overflow: hidden;
+}
+.way::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  transform-origin: bottom;
+  scale: 1 0;
+  transition: scale 0.55s var(--ease-out);
+}
+.way > * {
+  position: relative;
+}
+.way:hover::before {
+  scale: 1 1;
+}
+.way__urdu {
+  color: var(--accent);
+  text-align: left;
+  font-size: 1.15rem;
+  line-height: 1.8;
+}
+.way__name {
+  font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+}
+.way__value {
+  margin-top: 0.4rem;
+  color: var(--accent);
+  font-family: var(--f-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  word-break: break-word;
+}
+.way__note {
+  margin-top: 0.7rem;
+  color: var(--muted);
+  font-size: var(--fs-small);
+}

@@ -1,0 +1,146 @@
+/* ==========================================================================
+   UI primitives — frames, buttons, links, section headers.
+   Imported once from globals.css so any component can use them.
+   ========================================================================== */
+
+/* ---------- the photograph ---------- */
+.frame {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--frame-accent, var(--feroze)) 14%, var(--ink-2));
+  /* Never a white flash while a photograph decodes — the plate is already the
+     colour of the picture that is about to arrive. */
+}
+.frame img {
+  transition: transform 1.2s var(--ease-out), filter 0.8s var(--ease-out);
+}
+
+/* Latent state: no file yet, or the file failed. Reads as intent, not error. */
+.frame__latent {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0.6rem;
+  padding: 1.5rem;
+  text-align: center;
+  background:
+    radial-gradient(
+      120% 90% at 50% 20%,
+      color-mix(in oklab, var(--frame-accent, var(--feroze)) 30%, transparent),
+      transparent 70%
+    ),
+    var(--ink-2);
+}
+.frame__latent .mono {
+  color: color-mix(in oklab, var(--frame-accent, var(--feroze)) 70%, var(--bone));
+}
+.frame__latent-title {
+  font-size: clamp(1.1rem, 2.4vw, 1.7rem);
+  color: var(--bone-dim);
+  max-width: 18ch;
+  line-height: 1.15;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.5rem;
+  background: var(--accent);
+  color: var(--ink);
+  font-family: var(--f-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: background 0.4s var(--ease-out), color 0.4s var(--ease-out),
+    border-color 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+}
+.btn:hover {
+  background: var(--bone);
+  transform: translateY(-2px);
+}
+.btn[data-ghost] {
+  background: none;
+  color: var(--fg);
+  border: 1px solid var(--rule-strong);
+}
+.btn[data-ghost]:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: none;
+}
+
+/* ---------- link with a travelling arrow ---------- */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--f-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.link-arrow::after {
+  content: "";
+  width: 1.6rem;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.45s var(--ease-out);
+}
+.link-arrow:hover::after {
+  width: 2.8rem;
+}
+
+/* ---------- section header ---------- */
+.head {
+  display: grid;
+  gap: 0.9rem;
+  max-width: 46rem;
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+.head__title {
+  font-size: var(--fs-h2);
+}
+.head__title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+/* ---------- page header (inner pages) ---------- */
+.pagehead {
+  padding-block: calc(var(--nav-h) + clamp(3rem, 9vw, 7rem)) clamp(2.5rem, 6vw, 4.5rem);
+  background: var(--bg);
+}
+.pagehead__urdu {
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.pagehead__title {
+  font-size: var(--fs-display);
+  max-width: 16ch;
+}
+.pagehead__lead {
+  margin-top: 1.2rem;
+}
+
+/* ---------- breadcrumbs ---------- */
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.crumbs a {
+  color: var(--muted);
+  transition: color 0.3s var(--ease-out);
+}
+.crumbs a:hover {
+  color: var(--accent);
+}
+.crumbs span[aria-hidden] {
+  color: var(--bone-faint);
+}

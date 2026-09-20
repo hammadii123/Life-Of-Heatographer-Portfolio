@@ -1,0 +1,357 @@
+@import "../styles/ui.css";
+@import "../styles/motion.css";
+
+/* ==========================================================================
+   HEARTOGRAPHER — design system
+
+   The palette is not invented. Every value below was read off Hammad's own
+   photographs: petrol shadows, turquoise paint, ochre light, sage midtones.
+   The site is dark so the photographs are the only thing that glows.
+   ========================================================================== */
+
+:root {
+  /* --- ground: the petrol shadow that sits under every one of his frames --- */
+  --ink: #0a1113;
+  --ink-2: #0e181a;
+  --ink-3: #142225;
+  --ink-4: #1c2d31;
+
+  /* --- accents, sampled --- */
+  --feroze: #2aa9b0; /* the painted bench, the rickshaw, shop shutters */
+  --feroze-dim: #1d7b80;
+  --ochre: #d9a441; /* chana in the light, bananas, sunlit kurta */
+  --ochre-deep: #b48130;
+  --sage: #8fa39a; /* overcast Karachi, midtones */
+  --clay: #b4703a; /* warm skin, brick, fur */
+
+  /* --- text --- */
+  --bone: #ece5d8;
+  --bone-dim: #a9b1ac;
+  --bone-faint: #6f7b78;
+
+  --bg: var(--ink);
+  --fg: var(--bone);
+  --muted: var(--bone-dim);
+
+  --rule: color-mix(in oklab, var(--fg) 12%, transparent);
+  --rule-strong: color-mix(in oklab, var(--fg) 26%, transparent);
+
+  /* Per-page accent. Photo and chapter pages override this inline, which
+     re-tints rules, links and focus rings without touching a component. */
+  --accent: var(--feroze);
+
+  /* --- type --- */
+  --f-display: var(--font-instrument-serif), "Iowan Old Style", Georgia, serif;
+  --f-body: var(--font-instrument-sans), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --f-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --f-urdu: var(--font-nastaliq), "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", serif;
+
+  --fs-mega: clamp(2.9rem, 11vw, 11rem);
+  --fs-display: clamp(2.3rem, 6.4vw, 6.4rem);
+  --fs-h2: clamp(1.9rem, 4.4vw, 4.2rem);
+  --fs-h3: clamp(1.25rem, 2vw, 1.9rem);
+  --fs-lead: clamp(1.08rem, 1.35vw, 1.38rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9rem;
+  --fs-micro: 0.7rem;
+
+  /* Nastaliq sits very low in its em box and needs real headroom, or the
+     descenders clip against anything underneath. */
+  --fs-urdu: clamp(1.15rem, 2.2vw, 2.1rem);
+  --lh-urdu: 2.25;
+
+  --gutter: clamp(1rem, 4vw, 3.5rem);
+  --shell: 1480px;
+  --measure: 62ch;
+  --nav-h: 68px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* Light surfaces exist, but only as a deliberate exception (a quote, a pull
+   section). The site does not have a light mode — a gallery with a white
+   chrome competes with the prints. */
+[data-tone="bone"] {
+  --bg: #e9e2d4;
+  --fg: var(--ink);
+  --muted: #55605d;
+  --rule: color-mix(in oklab, var(--fg) 14%, transparent);
+  --rule-strong: color-mix(in oklab, var(--fg) 30%, transparent);
+}
+[data-tone="raised"] {
+  --bg: var(--ink-2);
+}
+[data-tone="deep"] {
+  --bg: #060c0d;
+}
+
+/* ---------- reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--nav-h) + 1.5rem);
+  background: var(--ink);
+  color-scheme: dark;
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+body {
+  min-height: 100svh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--f-body);
+  font-size: var(--fs-body);
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+}
+::selection {
+  background: var(--accent);
+  color: var(--ink);
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- type ---------- */
+.display {
+  font-family: var(--f-display);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.015em;
+}
+.display em {
+  font-style: italic;
+}
+.mono {
+  font-family: var(--f-mono);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.lead {
+  font-size: var(--fs-lead);
+  line-height: 1.58;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+.prose p + p {
+  margin-top: 1.1em;
+}
+.prose {
+  max-width: var(--measure);
+}
+
+/* Urdu. Always RTL, always Nastaliq, always with room to breathe. */
+.urdu {
+  font-family: var(--f-urdu);
+  font-size: var(--fs-urdu);
+  line-height: var(--lh-urdu);
+  direction: rtl;
+  /* RTL text, but flush with the left-aligned Latin column around it. Urdu
+     set hard-right in a left-aligned layout reads as a stray caption, and it
+     drifts off the edge of wide containers. Use .urdu--right to opt out. */
+  text-align: left;
+  font-weight: 400;
+  /* Nastaliq renders as connected strokes; letter-spacing destroys it. */
+  letter-spacing: normal;
+  /* Preserve the line breaks the author wrote inside a caption. */
+  white-space: pre-line;
+  /* Nastaliq hangs well below its baseline and rises above its cap height.
+     Without this padding the descenders are shaved off by any ancestor with
+     overflow clipping — which was happening in the footer and the marquee. */
+  padding-block: 0.18em 0.28em;
+}
+.urdu--center {
+  text-align: center;
+}
+.urdu--right {
+  text-align: right;
+}
+
+/* ---------- layout ---------- */
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.shell--narrow {
+  max-width: 900px;
+}
+.section {
+  padding-block: clamp(4.5rem, 11vw, 10rem);
+  background: var(--bg);
+  color: var(--fg);
+}
+.rule {
+  height: 1px;
+  background: var(--rule);
+  border: 0;
+}
+
+/* ---------- reveal ----------
+   One IntersectionObserver in Reveal.tsx flips [data-reveal] to "in".
+   No animation library: every motion on this site is a CSS transition we own. */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 18px), 0);
+  transition:
+    opacity 0.9s var(--ease-out),
+    transform 0.9s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal="rise"] {
+  --reveal-y: 34px;
+}
+[data-reveal="soft"] {
+  --reveal-y: 12px;
+}
+[data-reveal="still"] {
+  --reveal-y: 0px;
+}
+[data-reveal].in {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* A rule that draws itself left-to-right as it enters. */
+[data-reveal="draw"] {
+  opacity: 1;
+  transform: none;
+  transform-origin: left center;
+  scale: 0 1;
+  transition: scale 1.1s var(--ease-out) var(--reveal-delay, 0ms);
+}
+[data-reveal="draw"].in {
+  scale: 1 1;
+}
+
+/* ---------- photograph protection ----------
+   Honest scope: this stops right-click save, drag-to-desktop, and the mobile
+   long-press "Save image" sheet. It cannot stop a screenshot, and nothing on
+   the web can. The real deterrent is that no full-resolution file is ever
+   served — next/image only ever emits a sized, re-encoded derivative. */
+.guard,
+.guard * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+}
+.guard img {
+  pointer-events: none;
+}
+/* A transparent sheet over the frame so the browser's own image context menu
+   never has an <img> to target. */
+.guard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* ---------- accessibility ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 200;
+  padding: 0.6rem 1rem;
+  background: var(--accent);
+  color: var(--ink);
+  font-family: var(--f-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: translateY(-160%);
+  transition: transform 0.25s var(--ease-out);
+}
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* Everything on this site degrades to a still, readable page. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  [data-reveal="draw"] {
+    scale: 1 1;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

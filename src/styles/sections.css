@@ -1,0 +1,496 @@
+/* ==========================================================================
+   Home page sections
+   ========================================================================== */
+
+/* ---------------- the name ---------------- */
+.meaning__word {
+  font-size: clamp(2.6rem, 11vw, 9rem);
+  margin-block: 0.8rem clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: -0.03em;
+}
+/* The seam where the two words join. The whole brand lives in this letter. */
+.meaning__seam {
+  color: var(--feroze);
+  font-style: italic;
+  display: inline-block;
+  transition: transform 0.7s var(--ease-spring), color 0.5s var(--ease-out);
+}
+.meaning__word:hover .meaning__seam {
+  transform: translateY(-0.08em) rotate(-8deg) scale(1.12);
+  color: var(--ochre);
+}
+
+.meaning__split {
+  display: grid;
+  gap: clamp(1.75rem, 5vw, 4rem);
+  align-items: start;
+}
+.meaning__urdu {
+  color: var(--feroze);
+  font-size: clamp(1.1rem, 2.6vw, 2rem);
+  /* Hold it to a sensible measure. Left to itself it wrapped with a single
+     orphaned word on the second line. */
+  max-width: 17ch;
+  white-space: normal;
+  border-right: 2px solid color-mix(in oklab, var(--feroze) 40%, transparent);
+  padding-right: 1.25rem;
+}
+.meaning__prose p {
+  color: var(--muted);
+}
+.meaning__prose em {
+  color: var(--fg);
+  font-style: italic;
+}
+
+@media (min-width: 900px) {
+  .meaning__split {
+    grid-template-columns: 1fr 1.15fr;
+  }
+}
+
+/* ---------------- chapters ---------------- */
+.chapters__list {
+  display: grid;
+  border-top: 1px solid var(--rule);
+}
+.chapter {
+  position: relative;
+  display: grid;
+  gap: 0.75rem 1.5rem;
+  padding-block: clamp(1.5rem, 4vw, 2.6rem);
+  border-bottom: 1px solid var(--rule);
+  align-items: start;
+  transition: background 0.55s var(--ease-out);
+}
+/* A band of the chapter's own colour wipes in from the left on hover. */
+.chapter::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 calc(var(--gutter) * -1);
+  width: calc(100% + var(--gutter) * 2);
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--accent) 16%, transparent),
+    transparent 55%
+  );
+  scale: 0 1;
+  transform-origin: left;
+  transition: scale 0.7s var(--ease-out);
+  z-index: -1;
+}
+.chapter:hover::before,
+.chapter:focus-visible::before {
+  scale: 1 1;
+}
+
+.chapter__no {
+  color: var(--accent);
+}
+.chapter__names {
+  display: grid;
+  gap: 0.2rem;
+}
+.chapter__urdu {
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  line-height: 1.9;
+  color: var(--accent);
+  text-align: left;
+}
+.chapter__title {
+  font-size: clamp(1.6rem, 4vw, 2.9rem);
+  transition: transform 0.6s var(--ease-out);
+}
+.chapter:hover .chapter__title {
+  transform: translateX(0.35rem);
+}
+.chapter__roman {
+  letter-spacing: 0.2em;
+}
+.chapter__blurb {
+  color: var(--muted);
+  font-size: var(--fs-small);
+  max-width: 46ch;
+}
+.chapter__go {
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+}
+.chapter:hover .chapter__go {
+  opacity: 1;
+  transform: none;
+}
+
+@media (min-width: 900px) {
+  .chapter {
+    grid-template-columns: 3rem minmax(10rem, 14rem) minmax(0, 1fr) 4.5rem;
+    gap: 0.75rem clamp(1rem, 2.5vw, 2.5rem);
+    align-items: center;
+  }
+}
+
+/* ---------------- stories ---------------- */
+.stories__grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 3vw, 3rem);
+}
+.story {
+  --accent: var(--feroze);
+}
+.story__link {
+  display: grid;
+  gap: 1.2rem;
+}
+.story__frame {
+  transition: box-shadow 0.7s var(--ease-out);
+}
+.story__link:hover .story__frame {
+  box-shadow: 0 30px 80px -30px color-mix(in oklab, var(--accent) 60%, black);
+}
+/* Grey until you engage with it, then colour. Proof first, feeling second. */
+.story__frame img {
+  filter: saturate(0.55) brightness(0.88);
+}
+.story__link:hover .story__frame img {
+  filter: none;
+  transform: scale(1.035);
+}
+.story__urdu {
+  color: var(--accent);
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  text-align: left;
+}
+.story__title {
+  font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+  margin-top: 0.15rem;
+}
+.story__excerpt {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  max-width: 48ch;
+}
+.story__meta {
+  margin-top: 0.9rem;
+}
+.stories__more {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+}
+
+@media (min-width: 780px) {
+  .stories__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* Offset the second column so the grid reads as a contact sheet rather than
+     a table. */
+  .stories__grid > :nth-child(even) {
+    margin-top: clamp(2rem, 7vw, 6rem);
+  }
+}
+
+/* ---------------- proof ---------------- */
+.proof__grid {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 5rem);
+  align-items: start;
+}
+.proof__quote blockquote {
+  font-size: clamp(1.7rem, 4.2vw, 3.4rem);
+  line-height: 1.08;
+}
+.proof__quote em {
+  font-style: italic;
+  color: var(--clay);
+}
+.proof__quote figcaption {
+  margin-top: 1.5rem;
+  max-width: 34ch;
+}
+.proof__stats {
+  display: grid;
+  gap: 1.5rem;
+}
+.proof__stat {
+  display: grid;
+  gap: 0.35rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+}
+.proof__stat dt {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1;
+}
+.proof__stat dd {
+  color: var(--muted);
+  font-size: var(--fs-small);
+  max-width: 34ch;
+}
+
+@media (min-width: 880px) {
+  .proof__grid {
+    grid-template-columns: 1.15fr 1fr;
+  }
+  .proof__stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ---------------- invite ---------------- */
+.invite__title {
+  font-size: var(--fs-h2);
+  margin-block: 0.9rem 1.3rem;
+}
+.invite__title em {
+  font-style: italic;
+  color: var(--feroze);
+}
+.invite__acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* ==========================================================================
+   The aperture standing in for the "o" of heartographer
+
+   Six blades that close as the word travels up the screen and open as it
+   leaves. Driven by animation-timeline: view() where it exists — native and
+   off the main thread. Everywhere else it simply sits open, which is the
+   correct resting state for a lens you are looking through.
+   ========================================================================== */
+.ap {
+  display: inline-block;
+  width: 0.78em;
+  height: 0.78em;
+  vertical-align: baseline;
+  /* Optically seat it on the baseline next to the serif letterforms. */
+  transform: translateY(0.02em);
+  margin-inline: 0.02em;
+}
+.ap__svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.ap__ring {
+  fill: none;
+  stroke: var(--ochre);
+  stroke-width: 5;
+}
+.ap__blade {
+  fill: var(--ochre);
+  /* transform-origin is set per blade in the component: each one pivots on
+     its own hinge point on the rim, which is what makes a hexagonal hole
+     instead of a solid disc. */
+  transform-box: view-box;
+  rotate: var(--iris, -42deg);
+}
+
+@supports (animation-timeline: view()) {
+  .ap__blade {
+    animation: ap-iris linear both;
+    animation-timeline: view();
+    animation-range: entry 30% exit 70%;
+  }
+  @keyframes ap-iris {
+    0% {
+      rotate: -42deg;
+    }
+    50% {
+      /* Stopped down. The blades swing in and the hole closes to a point. */
+      rotate: -4deg;
+    }
+    100% {
+      rotate: -42deg;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap__blade {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   Quiet — one photograph, full bleed, one line of Urdu.
+   The page stops talking.
+   ========================================================================== */
+.quiet {
+  position: relative;
+  background: var(--ink);
+}
+.quiet__link {
+  display: block;
+  position: relative;
+}
+.quiet__frame {
+  /* Full bleed, but never taller than the screen — a photograph you have to
+     scroll to see the bottom of is a wallpaper, not a picture. */
+  width: 100%;
+  aspect-ratio: auto !important;
+  height: clamp(340px, 92svh, 900px);
+}
+.quiet__frame img {
+  object-position: center 38%;
+}
+.quiet__words {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: grid;
+  gap: 0.6rem;
+  padding: clamp(3rem, 12vh, 7rem) var(--gutter) clamp(1.5rem, 5vh, 3rem);
+  background: linear-gradient(transparent, color-mix(in oklab, var(--ink) 92%, transparent));
+  pointer-events: none;
+}
+.quiet__urdu {
+  max-width: 24ch;
+  font-size: clamp(1.15rem, 3vw, 2.4rem);
+  color: var(--bone);
+  text-shadow: 0 2px 30px rgb(0 0 0 / 0.6);
+}
+.quiet__meta {
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   The band — a contact sheet travelling sideways as the page scrolls down.
+   ========================================================================== */
+.band {
+  padding-block: clamp(2rem, 5vw, 3.5rem) clamp(2rem, 5vw, 3.5rem);
+  background: var(--ink-2);
+  border-block: 1px solid var(--rule);
+  overflow: hidden;
+}
+.band__rail {
+  /* Touch and unsupported browsers get an honest horizontal scroller. */
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.band__rail::-webkit-scrollbar {
+  display: none;
+}
+.band__track {
+  display: flex;
+  gap: clamp(0.75rem, 1.8vw, 1.6rem);
+  width: max-content;
+  padding-inline: var(--gutter);
+}
+
+@supports (animation-timeline: view()) {
+  @media (pointer: fine) {
+    .band__rail {
+      overflow-x: clip;
+    }
+    .band__track {
+      animation: band-pass linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+    @keyframes band-pass {
+      from {
+        transform: translate3d(2%, 0, 0);
+      }
+      to {
+        /* Never past the end of the strip, whatever its length. */
+        transform: translate3d(calc(-100% + 96vw), 0, 0);
+      }
+    }
+  }
+}
+
+.band__cell {
+  position: relative;
+  flex: 0 0 clamp(160px, 22vw, 280px);
+  scroll-snap-align: center;
+  display: grid;
+  gap: 0.5rem;
+}
+.band__no {
+  font-size: 0.55rem;
+  color: var(--bone-faint);
+}
+.band__cell .frame img {
+  filter: saturate(0.5) brightness(0.82);
+  transition: filter 0.7s var(--ease-out), transform 1s var(--ease-out);
+}
+.band__urdu {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--bone-faint);
+  transition: color 0.45s var(--ease-out);
+}
+@media (hover: hover) {
+  .band__cell:hover .frame img {
+    filter: none;
+    transform: scale(1.03);
+  }
+  .band__cell:hover .band__urdu {
+    color: var(--accent);
+  }
+}
+
+/* ==========================================================================
+   Marquee — his own captions, running past forever.
+   ========================================================================== */
+.mq {
+  padding-block: clamp(2rem, 5vw, 3.5rem);
+  background: var(--ink);
+  border-bottom: 1px solid var(--rule);
+  overflow: hidden;
+  /* Fade both ends so the lines arrive from nowhere and leave for nowhere. */
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+.mq__rail {
+  display: flex;
+  width: max-content;
+  animation: mq 64s linear infinite;
+}
+.mq:hover .mq__rail {
+  animation-play-state: paused;
+}
+@keyframes mq {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.mq__run {
+  display: flex;
+  align-items: center;
+}
+.mq__item {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding-inline: clamp(0.75rem, 2vw, 1.75rem);
+}
+.mq__urdu {
+  font-size: clamp(1.05rem, 2.2vw, 1.8rem);
+  line-height: 2.4;
+  color: var(--bone-dim);
+  white-space: nowrap;
+  transition: color 0.5s var(--ease-out);
+}
+.mq__item:hover .mq__urdu {
+  color: var(--feroze);
+}
+.mq__dot {
+  flex: 0 0 auto;
+  width: 4px;
+  height: 4px;
+  background: var(--ochre);
+  rotate: 45deg;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mq__rail {
+    animation: none;
+  }
+  .mq {
+    overflow-x: auto;
+  }
+}
