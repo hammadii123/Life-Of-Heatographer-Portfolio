@@ -74,8 +74,13 @@ export function applyFrame(
   const a5 = span(p, ...ACTS.through);
 
   // Derived beats, named the way the story is.
-  const close = Math.min(1, a4 * 4.2); // blades meeting
-  const develop = Math.max(0, (a4 - 0.18) / 0.82); // print coming up
+  const close = Math.min(1, a4 * 5); // blades meeting
+  // The print starts coming up the moment the blades shut, and is readable
+  // well before the act ends. An earlier curve left a long stretch where the
+  // blades were closed, the flash was half on and the photograph was still
+  // almost black — on screen that is a grey wash with a dark rectangle in it,
+  // which reads as broken rather than as a darkroom.
+  const develop = clamp01((a4 - 0.2) / 0.45);
   const exit = a5; // going through it
   const pan = mx * 2 - 1;
 
@@ -105,7 +110,7 @@ export function applyFrame(
 
   /* ---- the world loses its colour, except where the finder points ---- */
   if (el.grey) {
-    el.grey.style.opacity = String(a3);
+    el.grey.style.opacity = String(a3 * (1 - close));
     const r = `calc(8vmax + ${(a3 * 5).toFixed(2)}vmax)`;
     const mask = `radial-gradient(circle ${r} at ${mxPct} ${myPct}, transparent 0%, transparent 58%, #000 100%)`;
     el.grey.style.maskImage = mask;
@@ -129,17 +134,27 @@ export function applyFrame(
     el.bladeBottom.style.transform = `translate3d(0,${(100 - close * 100).toFixed(2)}%,0)`;
   }
   if (el.flash) {
-    // A flash is 1/200th of a second, not a white screen you scroll through.
-    el.flash.style.opacity = String(close * (1 - Math.min(1, develop * 9)) * 0.8);
+    // A narrow spike at the instant the blades meet, and gone. Anything
+    // wider than this is a white screen you have to scroll through.
+    el.flash.style.opacity = String(Math.max(0, 1 - Math.abs(a4 - 0.2) / 0.06) * 0.85);
   }
 
   /* ---- the print, developing, then coming toward you ---- */
   if (el.print) {
-    el.print.style.opacity = String(close * (1 - Math.max(0, (exit - 0.35) / 0.65)));
+    // Appears AFTER the flash, not during it. While the frame is white, an
+    // undeveloped print on top of it is a black rectangle on a white screen,
+    // which reads as a broken image rather than as an exposure.
+    //
+    // Then it holds almost to the end: fading it out early left several
+    // hundred pixels of blank screen before the hero released, worst on a
+    // phone where the whole act is a couple of thumb-flicks long.
+    const arrive = clamp01((a4 - 0.22) / 0.08);
+    const leave = 1 - Math.max(0, (exit - 0.72) / 0.28) * 0.8;
+    el.print.style.opacity = String(close * arrive * leave);
     el.print.style.transform = `scale(${((0.92 + close * 0.08) * (1 + exit * 2.2)).toFixed(3)})`;
     el.print.style.filter =
       `grayscale(${(1 - develop).toFixed(3)}) ` +
-      `brightness(${(0.42 + develop * 0.58).toFixed(3)}) ` +
+      `brightness(${(0.38 + develop * 0.62).toFixed(3)}) ` +
       `contrast(${(1.8 - develop * 0.8).toFixed(3)})`;
   }
   if (el.printCap) {

@@ -759,37 +759,104 @@
 }
 
 /* --------------------------------------------------------------------------
-   Responsive
-   The acts do not change on a phone — the sizes do. A story that only works
-   on a laptop is not a story, it is a demo.
+   Phones
+
+   On a 360x470 screen the words alone nearly fill the stage, so the first
+   version buried the whole story behind them: the crowd was a dark smudge and
+   the one who stopped never appeared at all — he was directly behind the
+   headline. The acts were running perfectly and none of them were visible.
+
+   So on a phone the stage is split. The world sits in the TOP half and the
+   words sit on the floor, and the scrim only covers the words.
    -------------------------------------------------------------------------- */
 @media (max-width: 860px) {
   .hero {
     height: 330svh;
   }
+
+  /* The world moves up out from behind the copy. */
+  .hero__world {
+    align-content: start;
+    padding-top: 13svh;
+  }
+  .hero__river {
+    align-content: start;
+    padding-top: 9svh;
+  }
+
+  /* The crowd has to be legible as people at this size, not a dark smear. */
+  .hero__body img {
+    filter: brightness(0.88) saturate(0.92);
+  }
   .hero__lane[data-lane="0"] {
-    --lane-h: 15vh;
+    --lane-h: 14vh;
+    opacity: 0.6;
   }
   .hero__lane[data-lane="1"] {
-    --lane-h: 20vh;
+    --lane-h: 17vh;
+    opacity: 0.85;
   }
   .hero__lane[data-lane="2"] {
-    --lane-h: 25vh;
+    --lane-h: 20vh;
+    opacity: 1;
   }
+
+  /* The pool of dark that opens around him follows the world upward. */
+  .hero__part {
+    background: radial-gradient(
+      circle at 50% 34%,
+      var(--ink) 0,
+      var(--ink) 30%,
+      color-mix(in oklab, var(--ink) 55%, transparent) 50%,
+      transparent 66%
+    );
+  }
+
   .hero__still {
-    width: clamp(170px, 52vw, 290px);
+    width: clamp(150px, 44vw, 230px);
   }
   .hero__finder {
-    width: 66vw;
+    width: 68vw;
   }
   .hero__print {
-    width: min(76vw, 340px);
+    width: min(64vw, 260px);
   }
+
+  /* The scrim only has to protect the words now, so it stops well short of
+     the crowd instead of drowning it. */
+  .hero__scrim {
+    height: 52%;
+    background: linear-gradient(
+      to top,
+      var(--ink) 8%,
+      color-mix(in oklab, var(--ink) 86%, transparent) 46%,
+      transparent 100%
+    );
+  }
+
   .hero__title {
-    max-width: 14ch;
+    max-width: 13ch;
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+  .hero__kicker {
+    font-size: 0.58rem;
+  }
+  .hero__sub {
+    display: none;
+  }
+  .hero__acts {
+    gap: 0.5rem;
+  }
+  .hero__go {
+    padding: 0.7rem 1.05rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+  }
+  .hero__copy {
+    padding-bottom: clamp(2.5rem, 7svh, 4rem);
   }
   .hero__hud {
-    bottom: 1rem;
+    bottom: 0.9rem;
   }
   .hero__cue {
     display: none;

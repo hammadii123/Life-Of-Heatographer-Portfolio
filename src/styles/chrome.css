@@ -10,10 +10,17 @@
     border-color 0.5s var(--ease-out);
   border-bottom: 1px solid transparent;
 }
+/* The lifted treatment lives on the BAR, never on .nav. backdrop-filter (and
+   filter, transform, will-change) make an element a containing block for its
+   position:fixed descendants — with it on .nav, the mobile panel measured
+   itself against the 68px bar instead of the screen and collapsed to nothing. */
 .nav[data-lifted="true"] {
+  border-bottom-color: var(--rule);
+}
+.nav[data-lifted="true"] .nav__bar {
   background: color-mix(in oklab, var(--ink) 82%, transparent);
   backdrop-filter: blur(14px) saturate(140%);
-  border-bottom-color: var(--rule);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
 }
 
 .nav__bar {
@@ -68,6 +75,10 @@
 .nav__link {
   position: relative;
   display: grid;
+  /* Both labels share one cell. Without centring they stretch to the cell
+     height — which the taller Nastaliq label sets — and the English sits at
+     the top of its box, riding visibly higher than the wordmark. */
+  place-items: center;
   padding-block: 0.4rem;
   font-size: var(--fs-small);
   overflow: hidden;
@@ -81,14 +92,14 @@
   font-size: 0.92rem;
   line-height: 1.1;
   opacity: 0;
-  transform: translateY(100%);
+  transform: translateY(2.4em);
   color: var(--feroze);
   text-align: center;
 }
 .nav__link:hover .nav__link-en,
 .nav__link:focus-visible .nav__link-en {
   opacity: 0;
-  transform: translateY(-100%);
+  transform: translateY(-2.4em);
 }
 .nav__link:hover .nav__link-ur,
 .nav__link:focus-visible .nav__link-ur {
@@ -110,6 +121,13 @@
 .nav__link:hover::after,
 .nav__link[data-active]::after {
   scale: 1 1;
+}
+
+/* The global .urdu descender padding is for running text; in the bar it just
+   inflates the row and knocks the alignment out. */
+.nav__mark-ur,
+.nav__link-ur {
+  padding-block: 0;
 }
 
 /* --- end --- */
@@ -163,9 +181,12 @@
   position: fixed;
   inset: var(--nav-h) 0 0 0;
   background: var(--ink);
-  padding-block: clamp(1.5rem, 6vh, 3rem);
+  padding-block: clamp(1.25rem, 5vh, 2.5rem);
   overflow-y: auto;
   overscroll-behavior: contain;
+  /* On a short phone the panel has to be able to scroll to its CTA. */
+  display: flex;
+  flex-direction: column;
 }
 .nav__panel[hidden] {
   display: none;
@@ -186,7 +207,8 @@
   transform: none;
 }
 .nav__panel-link .display {
-  font-size: clamp(1.9rem, 8vw, 2.9rem);
+  font-size: clamp(1.7rem, 7.5vw, 2.6rem);
+  line-height: 1.05;
 }
 .nav__panel-link .urdu {
   font-size: 1.1rem;
@@ -242,9 +264,12 @@
   direction: rtl;
 }
 .foot__en {
-  font-size: clamp(1.8rem, 5vw, 3.4rem);
+  font-size: clamp(1.6rem, 5vw, 3.4rem);
   font-style: italic;
-  margin-top: 0.4rem;
+  /* .display has line-height .94; against a Nastaliq line above it, that is
+     not enough to stop the two overlapping on a narrow screen. */
+  line-height: 1.08;
+  margin-top: 0.75rem;
 }
 .foot__act {
   display: flex;
